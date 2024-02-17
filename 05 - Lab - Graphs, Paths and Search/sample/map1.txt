@@ -1,0 +1,12 @@
+# This is a comment and is ignored
+# First specify the width x height values
+6 5
+# Second specify the start and target box indexes
+0 17
+# Now specify each row of column values
+. . . . . .
+~ ~ X . . .
+. ~ X ~ . .
+. . X . . .
+. m m m . .
+# Note the number of rows and column values match

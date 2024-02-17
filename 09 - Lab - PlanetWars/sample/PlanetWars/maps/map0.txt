@@ -1,0 +1,8 @@
+#M <gameid> <playerid> <tick num> <winner>
+#P <x> <y> <planetid> <owner_id> <num_ships> <growth_rate>
+#F <fleetid> <ownerid> <.num_ships> <source> <destination> <progress>
+M 1 0 0 0
+P 10 10 1 1 119 4
+P 10 20 2 0 100 5
+P 20 10 3 0 100 5
+P 20 20 4 2 119 4
