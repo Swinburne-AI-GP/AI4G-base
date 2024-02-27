@@ -34,7 +34,6 @@ habit for this unit. However, please keep in mind that this repository should NO
 ## Notes
 * Do not share teaching materials provided in this unit online. That include lecture notes, sample code, spike documents, as well as your own work that could be inappropriately used by someone else.
 * TODO: Learn to use markdown! There are many introduction tutorials to markdown.
-  Here is one https://bitbucket.org/tutorials/markdowndemo/src/master/
 
 ## About Not Sharing Unit Materials and Your Work Publically.
 You may think that asking you not to share teaching resources online, and not sharing your own work, is restrictive. However, we require this to protect both your work from misuse, as well as to limit issues with teaching materials being shared in an uncontrolled way.
