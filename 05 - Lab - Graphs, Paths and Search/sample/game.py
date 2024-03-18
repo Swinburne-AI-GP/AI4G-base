@@ -36,7 +36,7 @@ class Game():
 
 	
 	def plan_path(self):
-		self.world.plan_path(search_modes[self.search_mode], self.search_limit)
+		self.world.plan_path(self.search_mode, self.search_limit)
 		window._update_label('status', 'Status: Path Planned')
 
 	def input_mouse(self, x, y, button, modifiers):
@@ -61,14 +61,14 @@ class Game():
 		# Change search mode? (Algorithm)
 		elif symbol == pyglet.window.key.M:
 			self.search_mode += 1
-			if self.search_mode >= len(search_modes):
+			if self.search_mode > len(search_modes):
 				self.search_mode = 1
 			self.world.plan_path(self.search_mode, self.search_limit)
 			window._update_label('search', 'Search Type: '+SearchModes(self.search_mode).name)
 		elif symbol == pyglet.window.key.N:
 			self.search_mode -= 1
-			if self.search_mode < 0:
-				self.search_mode = len(search_modes)-1
+			if self.search_mode <= 0:
+				self.search_mode = len(search_modes)
 			self.world.plan_path(self.search_mode, self.search_limit)
 			window._update_label('search', 'Search Type: '+SearchModes(self.search_mode).name)
 		# Plan a path using the current search mode?

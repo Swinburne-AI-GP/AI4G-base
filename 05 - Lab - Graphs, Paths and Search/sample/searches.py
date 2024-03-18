@@ -235,10 +235,10 @@ def SearchAStar(graph, source_idx, target_idx, limit=0):
 
 # A simple dictionary with string keys to each search class type.
 SEARCHES = {
-	0: SearchDFS,
-	1: SearchBFS,
-	2: SearchDijkstra,
-	3: SearchAStar,
+	1: SearchDFS,
+	2: SearchBFS,
+	3: SearchDijkstra,
+	4: SearchAStar,
 }
 
 
