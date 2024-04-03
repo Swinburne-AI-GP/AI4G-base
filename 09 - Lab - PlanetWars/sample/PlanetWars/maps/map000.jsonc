@@ -1,0 +1,62 @@
+{
+	"planets": [
+		{
+			"ID:": 1, //if planets do not have an id, they will be assigned one.
+			//x and y position of the planets.
+			"x": 10,
+			"y": 10,
+			"growth": 1, //growth rate in ship per tick. Default is 0.
+			"ships": 100, //ships on the planet at the start of the game. Default is 0.
+			"owner": 0 //if there are no specified owned planets at the start of the game, players will be spawned as far apart as possible. Default is (neutral player)
+		}
+	],
+	"fleets": [
+		{
+			"ID": 1,
+			//x and y position of the fleets
+			"x": 20,
+			"y": 20,
+			//number of ships in fleet
+			"ships:": 100,
+			"owner": 0 //fleets cannot actually have an owner of 0 (neutral player). Fleets with owner 0 will not be spawned
+		}
+	],
+	"players": [
+		{
+			"ID": 0, //Player with ID 0 is always created, even if not specified
+			"name": "Neutral Player"
+		}
+	],
+	"orders": [
+		{
+			"ID": "",
+			"tick": 0,	//tick this order is to be executed on
+			"owner": 0,	//Neutral Player cannot have orders
+			"name": "optional", //an optional debug name
+			"type": "planet/fleet", //the type of order. TODO: Remove. Should be determinable from source. 
+			//If source is a fleet ID, fleet will execute order. 
+			//If source is a planet ID, planet will execute order with a new fleet. Order will be created for new fleet.
+			"source": "object_id", //the ID of an object.
+			"destination": "object_id or {x,y}" // the ID of an object or a {x,y} coordinates 
+		}
+	],
+	"log": [
+		//the log is an array of changes to the game state.
+		//a replay would apply each change in order
+		//a log transformer might make this human readable in some way
+		{
+			"tick": 0, //tick number
+			"changes": [
+				{
+					"id": 0, //object id change applies to
+					"number": 0, //new number of ships in object
+					"position": {
+						"x": 0,
+						"y": 0
+					}, //new position of object
+					"owner": 0 //new owner
+				}
+			]
+		}
+	]
+}
