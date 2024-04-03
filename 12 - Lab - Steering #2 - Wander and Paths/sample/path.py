@@ -9,8 +9,7 @@ For class use only. Do not publically share or post this code without permission
 from random import random, uniform
 from matrix33 import Matrix33
 from vector2d import Vector2D
-from graphics import egi
-
+from graphics import window, PolyLine, COLOUR_NAMES
 from math import pi
 
 TWO_PI = pi * 2.0
@@ -40,6 +39,9 @@ class Path(object):
         self._pts = []
         if num_pts > 0:
             self.create_random_path(num_pts, minx, miny, maxx, maxy)
+        #TODO: Add renderables
+        self.renderable = None
+        self._reset()
 
     def current_pt(self):
         ''' Return the way point of the path indicated by the current point
@@ -83,6 +85,7 @@ class Path(object):
         ''' Add the waypoint to the end of the path.'''
         self._pts.append(new_pt)
         self._num_pts += 1
+        self._reset()  # reset num_pts and cur_pt_idx
 
     def set_pts(self, path_pts):
         ''' Replace our internal set of points with the container of points
@@ -92,9 +95,17 @@ class Path(object):
 
     def _reset(self):
         ''' Point to the first waypoint and set the limit count based on the
-            number of points we've been given. '''
+            number of points we've been given. 
+            Also updates the path renderable.'''
         self._cur_pt_idx = 0
         self._num_pts = len(self._pts)
+        self.renderable = PolyLine(
+            self._pts,
+            colour=COLOUR_NAMES['PINK'],
+            batch=window.get_batch("info"),
+            closed=self.looped
+        )
+
 
     def clear(self):
         ''' Remove all way points and reset internal counters. '''
@@ -105,17 +116,4 @@ class Path(object):
         ''' Simple wrapper to return a reference to the internal list of
             points.'''
         return self._pts
-
-    def render(self):
-        ''' Draw the path, open or closed, using the current pen colour. '''
-        # draw base line
-        egi.blue_pen()
-        if self.looped:
-            egi.closed_shape(self._pts)
-        else:
-            egi.polyline(self._pts)
-        # draw current waypoint
-        egi.orange_pen()
-        wp = self.current_pt()
-        egi.circle(pos=wp, radius=5, slices=32)
 

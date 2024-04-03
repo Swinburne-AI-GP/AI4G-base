@@ -6,7 +6,7 @@ For class use only. Do not publically share or post this code without permission
 Updated by Steve Dower
 '''
 
-from math import sqrt
+from math import sqrt, atan2, degrees
 from point2d import Point2D  # Not used here, but easy way to expose it
 
 MIN_FLOAT = 1e-300
@@ -113,6 +113,14 @@ class Vector2D(object):
     def get_reverse(self):
         ''' return a new vector that is the reverse of self. '''
         return Vector2D(-self.x, -self.y)
+    
+    def angle(self):
+        ''' return the angle of self in radians '''
+        return atan2(self.y, self.x)
+    
+    def angle_degrees(self):
+        ''' return the angle of self in degrees '''
+        return degrees(self.angle())
 
     def __neg__(self):  #
         ''' get_reverse(), but using - operator based instead. '''

@@ -1,208 +1,483 @@
-'''A simple proceedural style graphics drawing wrapper.
+import pyglet, math
 
-Created for COS30002 AI for Games, by Clinton Woodward <cwoodward@swin.edu.au>
-For class use only. Do not publically share or post this code without permission.
-
-This module creates a simple object named "egi", which is an instance of the
-EasyGraphics interface, as well as making the pyglet key codes avaiable as
-KEY.
-
-Note: This has not been designed for performance! In particular, excessive
-text drawing will be very expensive. If you need better performance, you
-should implement opengl code for yourself.
-
-Updates:
- - 2021-03-22: fixed text label color (255 values) and vector2d (added truediv)
-
-'''
-from pyglet.gl import *
-from pyglet import text, window
-# from math import cos, sin, pi
-
-KEY = window.key  # the key codes
-
-COLOR_NAMES = {
-    'BLACK':  (0.0, 0.0, 0.0, 1),
-    'WHITE':  (1.0, 1.0, 1.0, 1),
-    'RED':    (1.0, 0.0, 0.0, 1),
-    'GREEN':  (0.0, 1.0, 0.0, 1),
-    'BLUE':   (0.0, 0.0, 1.0, 1),
-    'GREY':   (0.6, 0.6, 0.6, 1),
-    'PINK':   (1.0, 0.7, 0.7, 1),
-    'YELLOW': (1.0, 1.0, 0.0, 1),
-    'ORANGE': (1.0, 0.7, 0.0, 1),
-    'PURPLE': (1.0, 0.0, 0.7, 1),
-    'BROWN':  (0.5, 0.35,0.0, 1),
-    'AQUA':   (0.0, 1.0, 1.0, 1),
-    'DARK_GREEN': (0.0, 0.4, 0.0, 1),
-    'LIGHT_BLUE': (0.6, 0.6, 1.0, 1),
-    'LIGHT_GREY': (0.8, 0.8, 0.8, 1),
-    'LIGHT_PINK': (1.0, 0.9, 0.9, 1)
+COLOUR_NAMES = {
+	'BLACK':  (000, 000, 000, 255),
+	'WHITE':  (255, 255, 255, 255),
+	'RED':    (255, 000, 000, 255),
+	'GREEN':  (000, 255, 000, 255),
+	'BLUE':   (000, 000 ,255, 255),
+	'GREY':   (100, 100, 100, 255),
+	'PINK':   (255, 175, 175, 255),
+	'YELLOW': (255, 255, 000, 255),
+	'ORANGE': (255, 175, 000, 255),
+	'PURPLE': (200, 000, 175, 200),
+	'BROWN':  (125, 125, 100, 255),
+	'AQUA':   (100, 230, 255, 255),
+	'DARK_GREEN': (000, 100, 000, 255),
+	'LIGHT_GREEN':(150, 255, 150, 255),
+	'LIGHT_BLUE': (150, 150, 255, 255),
+	'LIGHT_GREY': (200, 200, 200, 255),
+	'LIGHT_PINK': (255, 230, 230, 255)
 }
 
+class ShapeGroup:
+	def __init__(self, anchor, batch):
+		self._x = anchor.x
+		self._y = anchor.y
+		self._anchor_x = self._x
+		self._anchor_y = self._y
+		self._rgba = (255, 255, 255, 255)
+		self._visible = True
+		self._batch = batch
+		self.shapes = []
 
-def rgbaTo255(color):
-    return tuple( int(v * 255) for v in color )
+	def draw(self):
+		for shape in self.shapes:
+			shape.draw()
 
-COLOR_NAMES_255 = {
-    k: rgbaTo255(v) for k, v in COLOR_NAMES.items()
-}
-#print(COLOR_NAMES_255)
+	def translate(self, v):
+		for shape in self.shapes:
+			shape.x += v.x
+			shape.y += v.y
+		self._anchor_x += v.x
+		self._anchor_y += v.y
+
+	@property
+	def x(self):
+		"""X coordinate of the shape.
+		:type: int or float
+		"""
+		return self._x
+
+	@x.setter
+	def x(self, value):
+		self.position = pyglet.math.Vec2(value, self._y)
+
+	@property
+	def y(self):
+		"""Y coordinate of the shape.
+		:type: int or float
+		"""
+		return self._y
+
+	@y.setter
+	def y(self, value):
+		self.position = pyglet.math.Vec2(self._x, value)
+
+	@property
+	def position(self):
+		"""The (x, y) coordinates of the shape, as a tuple.
+		:Parameters:
+			`x` : int or float
+				X coordinate of the sprite.
+			`y` : int or float
+				Y coordinate of the sprite.
+		"""
+		return pyglet.math.Vec2(self._x, self._y)
+
+	@position.setter
+	def position(self, values):
+		if type(values) is tuple:
+			values = pyglet.math.Vec2(values[0], values[1])
+		pos = pyglet.math.Vec2(self.position[0], self.position[1])
+		v = values - pos
+		self.translate(v)
+		self._x = values.x
+		self._y = values.y
+
+	@property
+	def anchor_x(self):
+		"""The X coordinate of the anchor point
+		:type: int or float
+		"""
+		return self._anchor_x
+
+	@anchor_x.setter
+	def anchor_x(self, value):
+		self._anchor_x = value
+
+	@property
+	def anchor_y(self):
+		"""The Y coordinate of the anchor point
+		:type: int or float
+		"""
+		return self._anchor_y
+
+	@anchor_y.setter
+	def anchor_y(self, value):
+		self._anchor_y = value
+
+	@property
+	def anchor_position(self):
+		"""The (x, y) coordinates of the anchor point, as a tuple.
+		:Parameters:
+			`x` : int or float
+				X coordinate of the anchor point.
+			`y` : int or float
+				Y coordinate of the anchor point.
+		"""
+		return self._anchor_x, self._anchor_y
+
+	@anchor_position.setter
+	def anchor_position(self, values):
+		if type(values) is tuple:
+			values = pyglet.math.Vec2(values[0], values[1])
+		self._anchor_x = values.x
+		self._anchor_y = values.y
+
+	@property
+	def color(self):
+		"""The shape color.
+		This property sets the color of the shape.
+		The color is specified as an RGB tuple of integers '(red, green, blue)'.
+		Each color component must be in the range 0 (dark) to 255 (saturated).
+		:type: (int, int, int)
+		"""
+		return self._rgba
+
+	@property
+	def colour(self):
+		"""The shape colour.
+		This property sets the colour of the shape.
+		The colour is specified as an RGB tuple of integers '(red, green, blue)'.
+		Each colour component must be in the range 0 (dark) to 255 (saturated).
+		:type: (int, int, int)
+		"""
+		return self._rgba
+
+	@colour.setter
+	def colour(self, values):
+		r, g, b, *a = values
+
+		if a:
+			self._rgba = r, g, b, a[0]
+		else:
+			self._rgba = r, g, b, self._rgba[3]
+
+		for line in self.shapes:
+			line.color = self._rgba
+
+	@color.setter
+	def color(self, values):
+		self.colour = values
+
+	@property
+	def opacity(self):
+		"""Blend opacity.
+		This property sets the alpha component of the color of the shape.
+		With the default blend mode (see the constructor), this allows the
+		shape to be drawn with fractional opacity, blending with the
+		background.
+		An opacity of 255 (the default) has no effect.  An opacity of 128
+		will make the shape appear translucent.
+		:type: int
+		"""
+		return self._rgba[3]
+
+	@opacity.setter
+	def opacity(self, value):
+		self._rgba = (*self._rgba[:3], value)
+		for shape in self.shapes:
+			shape.color = self._rgba
+
+	@property
+	def visible(self):
+		"""True if the shape will be drawn.
+		:type: bool
+		"""
+		return self._visible
+
+	@visible.setter
+	def visible(self, value):
+		self._visible = value
+		for shape in self.shapes:
+			shape.visible = value
+
+	@property
+	def group(self):
+		raise NotImplementedError
+
+	@group.setter
+	def group(self, group):
+		raise NotImplementedError
+
+	@property
+	def batch(self):
+		"""User assigned :class:`Batch` object."""
+		return self._batch
+
+	@batch.setter
+	def batch(self, batch):
+		if self._batch == batch:
+			return
+
+		for line in self.shapes:
+			line.batch = batch 
+
+		self._batch = batch
+		
+class LineGroup(ShapeGroup):
+	def __init__(self,
+		position,
+		rotation = 0,
+		batch = None
+	) -> None:
+		
+		super(LineGroup, self).__init__(
+			position,
+			batch = batch
+		)
+		self._rotation = rotation
+
+	@property
+	def rotation(self):
+		return self._rotation
+
+	@rotation.setter
+	def rotation(self, value):
+		a_v = pyglet.math.Vec2(self._anchor_x, self.anchor_y)
+		rel_r = value-self._rotation
+		for line in self.shapes:
+			#move into line space
+			v1 = pyglet.math.Vec2(line.x, line.y) - a_v
+			v2 = pyglet.math.Vec2(line.x2, line.y2) - a_v
+			#rotate
+			v1 = v1.rotate(rel_r)
+			v2 = v2.rotate(rel_r)
+			#back into world space
+			v1 = v1+a_v
+			v2 = v2+a_v
+			#update line
+			line.x = v1.x
+			line.y = v1.y
+			line.x2 = v2.x
+			line.y2 = v2.y
+		self._rotation = value
+
+class PolyLine(LineGroup):
+	def __init__(self,
+		vertices,
+		width=1,
+		colour=COLOUR_NAMES['AQUA'], 
+		batch=None,
+		closed=False
+	) -> None:
+		
+		super(PolyLine, self).__init__(
+			vertices[0],
+			batch = batch
+		)
+
+		line = []
+		for v in vertices:
+			line.append(v)
+			if len(line) == 2:
+				self.shapes.append(
+					pyglet.shapes.Line(
+						line[0].x, line[0].y,
+						line[1].x, line[1].y,
+						width,
+						color=colour,
+						batch=batch
+					)
+				)
+				line = []
+				line.append(v)
+		if closed:
+			self.shapes.append(
+					pyglet.shapes.Line(
+						vertices[0].x, vertices[0].y,
+						vertices[-1].x, vertices[-1].y,
+						width,
+						color=colour,
+						batch=batch
+					)
+				)
+
+class ArrowLine(LineGroup):
+	def __init__(self,
+		v1, v2,
+		width=1,
+		colour=COLOUR_NAMES['AQUA'], 
+		batch=None,
+		arrow_length=10,
+		arrow_offset=0,
+		arrow_angle=math.pi/4
+	) -> None:
+		super(ArrowLine, self).__init__(
+			v1,
+			batch = batch
+		)
+		self._endx = v2.x
+		self._endy = v2.y
+		self.width = width
+		self.colour = colour
+		self.arrow_length = arrow_length
+		self.arrow_offset = arrow_offset
+		self.arrow_angle = arrow_angle
+		self.shapes.append(
+			pyglet.shapes.Line(
+				v1.x, v1.y,
+				v2.x, v2.y,
+				width,
+				color=colour,
+				batch=batch
+			)
+		)
+		self.update_arrow_tines()
+		
+	def update_arrow_tines(self):
+		#vector from v1 to v2
+		arrow_vec = self.end_pos-self.position
+		#shrink by arrow offset
+		arrow_vec = arrow_vec*(1-self.arrow_offset)
+		#back into worldspace
+		arrow_anchor = self.position+arrow_vec
+		#arrow tines
+		av0 = pyglet.math.Vec2(0, self.arrow_length)
+		av0 = arrow_vec.from_magnitude(av0.mag)
+		av0 = -av0
+		av1 = av0.rotate(self.arrow_angle)
+		av2 = av0.rotate(-self.arrow_angle)
+		av1 += self.end_pos
+		av2 += self.end_pos
+		if len(self.shapes)>1:
+			self.shapes[1].x = arrow_anchor.x
+			self.shapes[1].y = arrow_anchor.y
+			self.shapes[1].x2 = av1.x
+			self.shapes[1].y2 = av1.y	
+		else:
+			self.shapes.append(
+				pyglet.shapes.Line(
+					arrow_anchor.x, arrow_anchor.y,
+					av1.x, av1.y,
+					self.width,
+					color=self.colour,
+					batch=self.batch
+				)
+			)
+		if len(self.shapes)>2:
+			self.shapes[2].x = arrow_anchor.x
+			self.shapes[2].y = arrow_anchor.y
+			self.shapes[2].x2 = av2.x
+			self.shapes[2].y2 = av2.y
+		else:
+			self.shapes.append(
+				pyglet.shapes.Line(
+					arrow_anchor.x, arrow_anchor.y,
+					av2.x, av2.y,
+					self.width,
+					color=self.colour,
+					batch=self.batch
+				)
+			)
+
+	@property
+	def x2(self):
+		return self.end_pos.x
+
+	@x2.setter
+	def x2(self, value):
+		self.end_pos.x = value
+		self.update_arrow_tines()
+	
+	@property
+	def y2(self):
+		return self.end_pos.y
+
+	@y2.setter
+	def y2(self, value):
+		self.end_pos.y = value
+		self.update_arrow_tines()
+
+	@property
+	def end_pos(self):
+		return pyglet.math.Vec2(self._endx, self._endy)
+
+	@end_pos.setter
+	def end_pos(self, value):
+		self._endx = value.x
+		self._endy = value.y
+		self.shapes[0].x2 = value.x
+		self.shapes[0].y2 = value.y
+		self.update_arrow_tines()
+
+class GameWindow(pyglet.window.Window):
+	MIN_UPS = 5
+	def __init__(self, **kwargs):
+		kwargs['config'] = pyglet.gl.Config(double_buffer=True, sample_buffers=1, samples=8) #antialiasing. TODO enable fallback if graphics card doesn't support
+		# set and use pyglet window settings
+		super(GameWindow, self).__init__(**kwargs)
+
+		# prep the fps display and some labels
+		self.fps_display = pyglet.window.FPSDisplay(self)
+		self.cfg = {
+			'INFO': False
+		}
+		#pyglet batches vastly improve rendering efficiency, 
+		#and allow us to efficiently turn on and off rendering groups of primitives
+		self.batches = {
+			"main": pyglet.graphics.Batch(),
+			"info": pyglet.graphics.Batch()
+		}
+		self.labels = {
+			'mode':	pyglet.text.Label('', x=200, y=self.height-20, color=COLOUR_NAMES['WHITE']),
+			'status':	pyglet.text.Label('', x=400, y=self.height-20, color=COLOUR_NAMES['WHITE']) 
+		}
+		# add extra event handlers we need
+		self.add_handlers()
+
+	def _update_label(self, label, text='---'):
+		if label in self.labels:
+			self.labels[label].text = text
+		
+
+	def add_handlers(self):
+		@self.event
+		#didn't test this... whoops
+		def on_resize(cx, cy):
+			from game import game
+			game.world.cx = cx
+			game.world.cy = cy
+
+		@self.event
+		def on_mouse_press(x, y, button, modifiers):
+			# we need to import game here to avoid circular imports
+			# and to make sure that the game object is created before we try to use it
+			from game import game
+			game.input_mouse(x, y, button, modifiers)
 
 
-class EasyGraphics(object):
+		@self.event
+		def on_key_press(symbol, modifiers):
+			if symbol == pyglet.window.key.I:
+				self.cfg['INFO'] = not self.cfg['INFO']
+			# we need to import game here to avoid circular imports
+			# and to make sure that the game object is created before we try to use it
+			from game import game
+			game.input_keyboard(symbol, modifiers)
 
-    def __init__(self):
-        # current "pen" colour of lines
-        self.pen_color = (1, 0, 0, 1.)
-        self.stroke = 1.0  # - thickness the default
+		@self.event
+		def on_draw():
+			self.clear()
+			self.batches["main"].draw()
+			if self.cfg['INFO']:
+				self.batches["info"].draw()
+			self.fps_display.draw()
+			for label in self.labels.values():
+				label.draw()
+		
+	def get_batch(self, batch_name="main"):
+		return self.batches[batch_name]
 
-    def InitWithPyglet(self, window):
-        # stuff that needs to be done *after* the pyglet window is created
-        self.set_pen_color(self.pen_color)
-        self.set_stroke(self.stroke)
-        self.window = window
-        # prep the text object
-        self.text = text.Label('', color=(255, 255, 255, 255),
-                              anchor_y='bottom', anchor_x='left')
-        # prep the quadric object used by glu* functions (circle)
-        # styles GLU_LINE, GLU_FILL, GLU_SILHOUETTE, GLU_POINT
-        self.qobj = gluNewQuadric()
-        gluQuadricDrawStyle(self.qobj, GLU_SILHOUETTE)
-
-    def dot(self, x=0, y=0, pos=None, color=None):
-        ''' Draw a single pixel at a given location. will use pos (with x and y
-            values) if provided. Colour is (R,G,B,A) values 0.0 to 1.0 '''
-        if pos is not None:
-            x, y = pos.x, pos.y
-        if color is not None:
-            glColor4f(*color)
-        glBegin(GL_POINTS)  # draw points (only one!)
-        glVertex3f(x, y, 0.0)
-        glEnd()
-
-    def line(self, x1=0, y1=0, x2=0, y2=0, pos1=None, pos2=None):
-        ''' Draw a single line. Either with xy values, or two position (that
-            contain x and y values). Uses existing colour and stroke values. '''
-        if pos1 is not None and pos2 is not None:
-            x1, y1, x2, y2 = pos1.x, pos1.y, pos2.x, pos2.y
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-
-    def line_by_pos(self, pos1, pos2):
-        ''' Draw a single line. Either with xy values, or two position (that
-            contain x and y values). Uses existing colour and stroke values. '''
-        x1, y1, x2, y2 = pos1.x, pos1.y, pos2.x, pos2.y
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-
-    def polyline(self, points):
-        if len(points) < 2: return
-        pts = [(p.x, p.y) for p in points]  # convert to list of tuples
-        pts = ((GLfloat * 2)*len(pts))(*pts)  # convert to GLfloat list
-        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glVertexPointer(2, GL_FLOAT, 0, pts)
-        glDrawArrays(GL_LINE_STRIP, 0, len(pts))
-        glPopClientAttrib()
-
-    def line_with_arrow(self, v1, v2, size):
-        norm = v2-v1
-        norm.normalise()
-        # calculate where arrow is attached
-        xpoint = v2 - (norm * size)
-        # calculate the two extra points required to make the arrowhead
-        ap1 = xpoint + (norm.perp() * 0.4 * size)
-        ap2 = xpoint - (norm.perp() * 0.4 * size)
-        # draw line from start to head crossing point
-        glBegin(GL_LINES)
-        glVertex2f(v1.x, v1.y)
-        glVertex2f(xpoint.x, xpoint.y)
-        glEnd()
-        # draw triangle for head
-        self.closed_shape((v2, ap1, ap2), filled=False)
-
-    def cross(self, pos, diameter):
-        d = diameter
-        x, y = pos.x, pos.y
-        glBegin(GL_LINES)
-        # TL to BR
-        glVertex2f(x-d, y-d)
-        glVertex2f(x+d, y+d)
-        # TR to BL
-        glVertex2f(x+d, y-d)
-        glVertex2f(x-d, y+d)
-        glEnd()
-
-    def rect(self, left, top, right, bottom, filled=False):
-        if filled:
-            glBegin(GL_QUADS)
-        else:
-            glBegin(GL_LINE_LOOP)
-        # A single quad - TL to TR to BR to BL (to TL...)
-        glVertex2f(left, top)
-        glVertex2f(right, top)
-        glVertex2f(right, bottom)
-        glVertex2f(left, bottom)
-        glEnd()
-
-    def closed_shape(self, points, filled=False):
-        if len(points) < 2: return
-        gl_array_type = GL_POLYGON if filled else GL_LINE_LOOP
-        # convert points to a list of types, then GLfloat list
-        pts = [(p.x, p.y) for p in points]
-        pts = ((GLfloat * 2)*len(pts))(*pts)
-        # tell GL system about the array of points
-        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
-        glEnableClientState(GL_VERTEX_ARRAY)
-        glVertexPointer(2, GL_FLOAT, 0, pts)
-        # draw array of points, and clean up
-        glDrawArrays(gl_array_type, 0, len(pts))
-        glPopClientAttrib()
-
-    def circle(self, pos, radius, filled=False, slices=0):
-        glPushMatrix()
-        glTranslatef(pos.x, pos.y, 0.0)
-        gluDisk(self.qobj, 0, radius, 32, 1)  # default style (filled? line?)
-        glPopMatrix()
-
-    # ----- COLOUR/STROKE STUFF -----
-    def set_pen_color(self, color=None, name=None):
-        if name is not None:
-            color = COLOR_NAMES[name]
-        self.curr_color = color
-        glColor4f(*self.curr_color)
-
-    def red_pen(self):    self.set_pen_color(name='RED')
-    def blue_pen(self):   self.set_pen_color(name='BLUE')
-    def green_pen(self):  self.set_pen_color(name='GREEN')
-    def black_pen(self):  self.set_pen_color(name='BLACK')
-    def white_pen(self):  self.set_pen_color(name='WHITE')
-    def grey_pen(self):   self.set_pen_color(name='GREY')
-    def aqua_pen(self):   self.set_pen_color(name='AQUA')
-    def orange_pen(self): self.set_pen_color(name='ORANGE')
-
-    def set_stroke(self, stroke):
-        self.stroke = stroke
-        glLineWidth(self.stroke)
-
-    # ----- TEXT METHODS -----
-    def text_color(self, color=None, name=None):
-        ''' Colour is a tuple (R,G,B,A) with values from 0.0 to 1.0 '''
-        if name is not None:
-            color = COLOR_NAMES_255[name]
-        self.text.color = color  #
-
-    def text_at_pos(self, x, y, text):
-        self.text.text = text
-        self.text.x = x
-        self.text.y = self.window.height + y if y < 0 else y
-        self.text.draw()
-
-
-# create an instance for anyone to use
-egi = EasyGraphics()
+#window creation has to be here so the window object is as global as python lets it be.
+settings = {
+		# window (passed to pyglet) details
+		'width': 800,
+		'height': 800,
+		'vsync': True,
+		'resizable': False,
+		'caption': "Autonomous Agent Steering",
+	}
+	
+window = GameWindow(**settings)
