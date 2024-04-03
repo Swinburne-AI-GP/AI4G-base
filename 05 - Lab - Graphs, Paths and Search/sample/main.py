@@ -1,7 +1,7 @@
 '''  BoxWorldWindow to test/demo graph (path) search.
 
 Created for COS30002 AI for Games, Lab,
-by Clinton Woodward <cwoodward@swin.edu.au>
+by Clinton Woodward <cwoodward@swin.edu.au>, James Bonner <jbonner@swin.edu.au>
 
 For class use only. Do not publically share or post this code without
 permission.
