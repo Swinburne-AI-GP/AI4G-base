@@ -22,6 +22,7 @@ import json
 import pathlib
 import uuid
 import collections
+import datetime
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(
@@ -85,9 +86,9 @@ if __name__ == "__main__":
 	if args.map or args.replay:
 		filename = args.map or args.replay
 		if args.map:
-			filename = pathlib.PurePath(".\\maps").joinpath(filename + ".json")
+			filename = pathlib.PurePath().joinpath('maps').joinpath(filename + ".json")
 		if args.replay:
-			filename = pathlib.PurePath(".\\replays").joinpath(filename + ".json")
+			filename = pathlib.PurePath().joinpath('replays').joinpath(filename + ".json")
 		f = open(filename, "r+")
 		gamestate = json.loads(f.read())
 	else:
@@ -120,11 +121,12 @@ if __name__ == "__main__":
 				#args.save_replay will either be
 				# a) undefined - there is no replay, we error out and move on
 				# b) a string - we save the replay to that filename
-				# c) None - we save the replay to a UUID filename
+				# c) None - we save the replay to players + timestamp
 				if args.save_replay:
-					replay_file = open(f".\\replays\\{args.save_replay}.json", "w")
+					replay_file = open(pathlib.PurePath().joinpath('replays').joinpath(args.save_replay + ".json"), "w")
 				else:
-					replay_file = open(f".\\replays\\{uuid.uuid1()}.json", "w")
+					filename = "".join(gamestate["players"])+str(datetime.datetime.now())+".json"
+					replay_file = open(pathlib.PurePath().joinpath('replays').joinpath(filename), "w")
 				replay_file.write(json.dumps(replay_object))
 			except:
 				pass
