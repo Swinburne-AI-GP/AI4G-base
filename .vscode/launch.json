@@ -5,12 +5,13 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Task 09 Planetwars Debug",
 			"type": "debugpy",
 			"request": "launch",
-			"program": "${workspaceFolder}\\main.py",
+			"program": "${workspaceFolder}\\09 - Lab - Graphs, Paths and Search\\sample\\main.py",
 			"console": "internalConsole",
 			"justMyCode": true,
-			"cwd": "${workspaceFolder}",
+			"cwd": "${workspaceFolder}\\09 - Lab - Graphs, Paths and Search\\sample",
 			"args": [
 				"--gui",
 				"-p",
