@@ -1,0 +1,35 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}\\main.py",
+			"console": "internalConsole",
+			"justMyCode": true,
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"--gui",
+				"-p",
+				"Blanko",
+				"OneSlowMove",
+				"--save-replay",
+				"-m",
+				"map001"
+				//"-r",
+				//"aaca4225-ed01-11ee-985c-e848b8c82000"
+			]
+		},
+		{
+			"name": "Task 12 Debug",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}\\12 - Lab - Steering #2 - Wander and Paths\\sample\\main.py",
+			"console": "integratedTerminal",
+			"cwd": "${workspaceFolder}\\12 - Lab - Steering #2 - Wander and Paths\\sample"
+		}
+	]
+}
