@@ -12,7 +12,7 @@ See readme.txt for details.
 
 import sys
 import pyglet
-#importing graphics for side-effects - it creates the egi and widnow module objects. 
+#importing graphics for side-effects - it creates the egi and window module objects. 
 #This is the closest python has to a global variable and it's completely gross
 import graphics
 #game has to take another approach to exporting a global variable
