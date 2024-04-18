@@ -82,7 +82,7 @@ class Game():
 			if self.search_limit-1 > 0:
 				self.search_limit -= 1
 				window._update_label('status', 'Status: limit=%d' % self.search_limit)
-				self.world.plan_path(SearchModes(self.search_mode), self.search_limit)
+				self.world.plan_path(self.search_mode, self.search_limit)
 		elif symbol == pyglet.window.key._0:
 			self.search_limit = 0
 			window._update_label('status', 'Status: limit=%d' % self.search_limit)
