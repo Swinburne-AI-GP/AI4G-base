@@ -84,9 +84,10 @@ class PlanetWarsGame():
 				sum_of_planets[1] += planet.y
 				if planet.owner == player.ID:
 					planets_by_player[player.ID].append(planet)
-					sum_of_owned_planets[0] += planet.x
-					sum_of_owned_planets[1] += planet.y
-					count_of_owned_planets += 1
+					if planet.owner != NEUTRAL_ID:
+						sum_of_owned_planets[0] += planet.x
+						sum_of_owned_planets[1] += planet.y
+						count_of_owned_planets += 1
 			if not player.ID in planets_by_player.keys():
 				players_to_be_spawned.append(player.ID)
 		unowned_planets = planets_by_player.pop(NEUTRAL_ID)
@@ -96,9 +97,9 @@ class PlanetWarsGame():
 		for playerID in players_to_be_spawned:
 			if count_of_owned_planets == 0:
 				centroid_of_owned_planets[0] = sum_of_planets[0] / \
-					count_of_owned_planets
-				centroid_of_owned_planets[1] = sum_of_planets[0] / \
-					count_of_owned_planets
+					len(self.planets)
+				centroid_of_owned_planets[1] = sum_of_planets[1] / \
+					len(self.planets)
 			else:
 				centroid_of_owned_planets[0] = sum_of_owned_planets[0] / \
 					count_of_owned_planets
