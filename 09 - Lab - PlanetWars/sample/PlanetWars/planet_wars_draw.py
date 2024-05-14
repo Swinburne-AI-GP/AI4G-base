@@ -235,7 +235,7 @@ class PlanetWarsWindow(pyglet.window.Window):
 
 		#load the background and scale it to the widnow size
 		
-		self.bg = pyglet.sprite.Sprite(pyglet.image.load(pathlib.PurePath().joinpath(".\\images\\space.jpg")))
+		self.bg = pyglet.sprite.Sprite(pyglet.image.load(pathlib.PurePath().joinpath("./images/space.jpg")))
 		self.bg.scale_x = self.width / self.bg.image.width
 		self.bg.scale_y = self.height / self.bg.image.height
 		#load the global UI elements (FPS counter, etc.)
