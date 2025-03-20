@@ -9,18 +9,18 @@
 			"name": "Task 09 Planetwars Debug",
 			"type": "debugpy",
 			"request": "launch",
-			"program": "${workspaceFolder}\\09 - Lab - Graphs, Paths and Search\\sample\\main.py",
+			"program": "${workspaceFolder}\\09 - Lab - PlanetWars\\sample\\Planetwars\\main.py",
 			"console": "internalConsole",
 			"justMyCode": true,
-			"cwd": "${workspaceFolder}\\09 - Lab - Graphs, Paths and Search\\sample",
+			"cwd": "${workspaceFolder}\\09 - Lab - PlanetWars\\sample\\Planetwars",
 			"args": [
 				"--gui",
 				"-p",
 				"Blanko",
-				"OneSlowMove",
+				"GalaxyConquerer",
 				"--save-replay",
 				"-m",
-				"map001"
+				"map019"
 				//"-r",
 				//"aaca4225-ed01-11ee-985c-e848b8c82000"
 			]
@@ -30,7 +30,7 @@
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}\\12 - Lab - Steering #2 - Wander and Paths\\sample\\main.py",
-			"console": "integratedTerminal",
+			"console": "internalConsole",
 			"cwd": "${workspaceFolder}\\12 - Lab - Steering #2 - Wander and Paths\\sample"
 		},
 		{
@@ -38,7 +38,7 @@
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}\\05 - Lab - Graphs, Paths and Search\\sample\\main.py",
-			"console": "integratedTerminal",
+			"console": "internalConsole",
 			"cwd": "${workspaceFolder}\\05 - Lab - Graphs, Paths and Search\\sample"
 		}
 	]
