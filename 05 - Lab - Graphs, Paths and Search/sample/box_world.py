@@ -177,7 +177,7 @@ class BoxWorld(object):
 		return self.boxes[idx] if idx < len(self.boxes) else None
 
 	def get_box_by_pos(self, x, y):
-		idx = (self.x_boxes * (y // self.wy)) + (x // self.wx)
+		idx = int((self.x_boxes * (y // self.wy)) + (x // self.wx))
 		return self.boxes[idx] if idx < len(self.boxes) else None
 
 	def _add_edge(self, from_idx, to_idx, distance=1.0):
@@ -275,7 +275,7 @@ class BoxWorld(object):
 						self.boxes[start].center().y,
 						self.boxes[target].center().x,
 						self.boxes[target].center().y,
-						width=0.5, 
+						thickness=0.5, 
 						color=COLOUR_NAMES['PURPLE'],
 						batch=window.get_batch("edges")
 					)
@@ -326,7 +326,7 @@ class BoxWorld(object):
 						self.boxes[p[idx]].center().y,
 						self.boxes[p[idx+1]].center().x,
 						self.boxes[p[idx+1]].center().y,
-						width=3, 
+						thickness=3, 
 						color=COLOUR_NAMES['BLUE'],
 						batch=window.get_batch("path")
 					)
@@ -346,7 +346,7 @@ class BoxWorld(object):
 						self.boxes[start].center().y,
 						self.boxes[end].center().x,
 						self.boxes[end].center().y,
-						width=2, 
+						thickness=2, 
 						color=COLOUR_NAMES['PINK'],
 						batch=window.get_batch("tree")
 					)
