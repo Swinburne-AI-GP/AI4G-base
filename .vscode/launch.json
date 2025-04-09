@@ -16,8 +16,8 @@
 			"args": [
 				"--gui",
 				"-p",
+				"OneSlowMove",
 				"Blanko",
-				"GalaxyConquerer",
 				"--save-replay",
 				"-m",
 				"map019"
