@@ -335,7 +335,7 @@ class ArrowLine(LineGroup):
 		arrow_anchor = self.position+arrow_vec
 		#arrow tines
 		av0 = pyglet.math.Vec2(0, self.arrow_length)
-		av0 = arrow_vec.from_magnitude(av0.mag)
+		av0 = av0.normalise() * arrow_vec.length()
 		av0 = -av0
 		av1 = av0.rotate(self.arrow_angle)
 		av2 = av0.rotate(-self.arrow_angle)
